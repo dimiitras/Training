@@ -40,7 +40,7 @@ assign w_max = (w_ptr == (MEMORY_DEPTH -1));
 wire w_wrap_up ;
 assign w_wrap_up = ( w_max);
 
-d_ff_sync_en #(.SIZE(MEMORY_DEPTH))
+d_ff_async_en #(.SIZE(MEMORY_DEPTH))
  counter_write_address(.clk(clk),
 		       .rst(rst),
 		       .en(cw_en),
@@ -133,7 +133,7 @@ assign read = (r_en & (!FULL));*/
 
 
 
-d_ff_sync_en #(.SIZE(MEMORY_WIDTH))
+d_ff_async_en #(.SIZE(MEMORY_WIDTH))
 	read_out(.clk(clk),
 		 .rst(rst),
 		 .en((r_en & (!EMPTY))),
