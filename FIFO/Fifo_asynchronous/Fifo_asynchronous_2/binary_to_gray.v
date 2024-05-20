@@ -6,7 +6,7 @@ parameter N;
 
 inout [(N-1) :0] binary;
 
-output [(N-1) :0] gray;
+output reg [(N-1) :0] gray;
 
 
 integer i;

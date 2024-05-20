@@ -40,7 +40,7 @@ gray_to_binary #(.N(ADDRESS_SIZE +1))
 
 wire [(ADDRESS_SIZE): 0] r_bnext;
 
-assign r_bnext = (w_en & (!r_empty)) ? (rbin + 1'b1) : rbin;
+assign r_bnext = (r_en & (!r_empty)) ? (rbin + 1'b1) : rbin;
 
 
 
@@ -99,8 +99,10 @@ assign r_addr = {addr_msb , r_ptr[(ADDRESS_SIZE-2): 0]};
 //Synchronisation of wptr to rclk
 
 wire [(ADDRESS_SIZE): 0] rq2_wptr;
-2
-2_ff_synchronizer #(.SYNCHRONIZER_SIZE(ADDRESS_SIZE +1 ))
+
+wire r_empty_temp;
+
+two_ff_synchronizer #(.SYNCHRONIZER_SIZE(ADDRESS_SIZE +1 ))
 	sync_w2r (.clk(r_clk),
 		  .rst_n(rrst_n),
 		  .in(w_ptr),
@@ -114,6 +116,13 @@ wire [(ADDRESS_SIZE): 0] rq2_wptr;
 
 assign r_empty = (r_gnext == rq2_wptr);
 
+
+d_ff_async #(SIZE(SYNCHRONIZER_SIZE))
+	r_empty_reg (.clk(r_clk),
+			.rst(!rrst_n),
+			   .d(r_empty_temp),
+			   .q(r_empty));			   
+			   
 
 
 

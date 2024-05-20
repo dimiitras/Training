@@ -14,7 +14,7 @@ rdata);
 parameter MEMORY_DEPTH;
 parameter MEMORY_WIDTH;
 
-parameter ADRESS_SIZE;
+parameter ADDRESS_SIZE;
 
 
 input w_clk;

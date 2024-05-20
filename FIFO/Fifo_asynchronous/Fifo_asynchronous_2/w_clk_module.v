@@ -31,7 +31,7 @@ wire [(ADDRESS_SIZE): 0] wbin;
 
 gray_to_binary #(.N(ADDRESS_SIZE +1))
 	w_gray_to_binary_conv (.gray(w_ptr),
-			     .binary(bin));
+			     .binary(wbin));
 			     
 	
 			     
@@ -100,8 +100,8 @@ assign w_addr = {addr_msb , w_ptr[(ADDRESS_SIZE-2): 0]};
 //Synchronisation of rptr to wclk
 
 wire [(ADDRESS_SIZE): 0] wq2_rptr;
-2
-2_ff_synchronizer #(.SYNCHRONIZER_SIZE(ADDRESS_SIZE +1 ))
+
+two_ff_synchronizer #(.SYNCHRONIZER_SIZE(ADDRESS_SIZE +1 ))
 	sync_r2w (.clk(w_clk),
 		  .rst_n(wrst_n),
 		  .in(r_ptr),
@@ -117,14 +117,21 @@ wire f1;
 wire f2;
 wire f3;
 
+wire w_full_temp;
+
 assign f1 = (!(wq2_rptr[ADDRESS_SIZE] == w_gnext[ADDRESS_SIZE]));
 assign f2 = (!(wq2_rptr[ADDRESS_SIZE-1] == w_gnext[ADDRESS_SIZE-1]));
 assign f3 = (wq2_rptr[(ADDRESS_SIZE-2) :0] == w_gnext[(ADDRESS_SIZE-2) :0]);
 
 
-assign wfull = (f1 & f2 & f3);
+assign wfull_temp = (f1 & f2 & f3);
 
-
+d_ff_async #(SIZE(SYNCHRONIZER_SIZE))
+	w_full_reg (.clk(w_clk),
+			.rst(!wrst_n),
+			   .d(w_full_temp),
+			   .q(w_full));			   
+			   
 
 
 
