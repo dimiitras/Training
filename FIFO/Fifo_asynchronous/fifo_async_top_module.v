@@ -14,6 +14,8 @@ rdata);
 parameter MEMORY_DEPTH;
 parameter MEMORY_WIDTH;
 
+parameter ADRESS_SIZE;
+
 
 input w_clk;
 input w_en;
@@ -28,15 +30,15 @@ output w_full;
 output [(MEMORY_WIDTH-1): 0] rdata;
 
 
-wire [(MEMORY_DEPTH): 0] r_ptr;
-wire [(MEMORY_DEPTH): 0] w_ptr;
+wire [(ADDRESS_SIZE): 0] r_ptr;
+wire [(ADDRESS_SIZE): 0] w_ptr;
 
-wire [(MEMORY_DEPTH-1): 0] w_addr;
-wire [(MEMORY_DEPTH-1): 0] r_addr;
+wire [(ADDRESS_SIZE-1): 0] w_addr;
+wire [(ADDRESS_SIZE-1): 0] r_addr;
 
 
 
-w_clk_module #(.MEMORY_DEPTH(MEMORY_DEPTH))
+w_clk_module #(.ADDRESS_SIZE(ADDRESS_SIZE))
 	write_clk_block (.w_clk(w_clk),
 			.w_en(w_en),
 			.wrst_n(wrst_n),
@@ -47,7 +49,7 @@ w_clk_module #(.MEMORY_DEPTH(MEMORY_DEPTH))
 
 
 
-r_clk_module #(.MEMORY_DEPTH(MEMORY_DEPTH))
+r_clk_module #(.ADDRESS_SIZE(ADDRESS_SIZE))
 	read_clk_block (.r_clk(r_clk),
 			.r_en(r_en),
 			.rrst_n(rrst_n),
