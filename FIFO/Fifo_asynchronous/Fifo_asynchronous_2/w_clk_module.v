@@ -7,7 +7,7 @@ w_ptr,
 w_full,
 w_addr);
 
-parameter MEMORY_DEPTH;
+
 
 parameter ADDRESS_SIZE;
 
@@ -126,7 +126,7 @@ assign f3 = (wq2_rptr[(ADDRESS_SIZE-2) :0] == w_gnext[(ADDRESS_SIZE-2) :0]);
 
 assign wfull_temp = (f1 & f2 & f3);
 
-d_ff_async #(SIZE(SYNCHRONIZER_SIZE))
+d_ff_async #(.SIZE(1))
 	w_full_reg (.clk(w_clk),
 			.rst(!wrst_n),
 			   .d(w_full_temp),

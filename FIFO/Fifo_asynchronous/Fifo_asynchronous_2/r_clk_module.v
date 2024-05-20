@@ -8,6 +8,7 @@ r_empty,
 r_addr);
 
 parameter MEMORY_DEPTH;
+
 parameter ADDRESS_SIZE;
 
 
@@ -117,7 +118,7 @@ two_ff_synchronizer #(.SYNCHRONIZER_SIZE(ADDRESS_SIZE +1 ))
 assign r_empty = (r_gnext == rq2_wptr);
 
 
-d_ff_async #(SIZE(SYNCHRONIZER_SIZE))
+d_ff_async #(.SIZE(1))
 	r_empty_reg (.clk(r_clk),
 			.rst(!rrst_n),
 			   .d(r_empty_temp),
