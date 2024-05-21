@@ -17,13 +17,13 @@ wire [(SYNCHRONIZER_SIZE-1):0] in2;
 
 
 
-d_ff_async #(SIZE(SYNCHRONIZER_SIZE))
+d_ff_async #(.SIZE(SYNCHRONIZER_SIZE))
 	synchronizer_ff_1 (.clk(clk),
 			   .rst(!rst_n),
 			   .d(in),
 			   .q(in2));
 			   
-d_ff_async #(SIZE(SYNCHRONIZER_SIZE))
+d_ff_async #(.SIZE(SYNCHRONIZER_SIZE))
 	synchronizer_ff_2 (.clk(clk),
 			   .rst(!rst_n),
 			   .d(in2),

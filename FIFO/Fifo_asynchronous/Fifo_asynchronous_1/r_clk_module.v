@@ -7,10 +7,7 @@ w_ptr,
 r_empty,
 r_addr);
 
-<<<<<<< HEAD:FIFO/Fifo_asynchronous/r_clk_module.v
-=======
-parameter MEMORY_DEPTH;
->>>>>>> temp_branch:FIFO/Fifo_asynchronous/Fifo_asynchronous_1/r_clk_module.v
+
 parameter ADDRESS_SIZE;
 
 
@@ -26,19 +23,13 @@ output [(ADDRESS_SIZE-1): 0] r_addr;
 
 
 
-<<<<<<< HEAD:FIFO/Fifo_asynchronous/r_clk_module.v
-
-//Conditional incrementation
-
-wire [(ADDRESS_SIZE): 0] r_bin;
-=======
 //Gray to Binary
 
-wire [(ADDRESS_SIZE): 0] rbin;
+wire [(ADDRESS_SIZE): 0] r_bin;
 
 gray_to_binary #(.N(ADDRESS_SIZE +1))
 	r_gray_to_binary_conv (.gray(r_ptr),
-			     .binary(rbin));
+			     .binary(r_bin));
 			     
 	
 			     
@@ -47,9 +38,7 @@ gray_to_binary #(.N(ADDRESS_SIZE +1))
 
 //Conditional incrementation
 
->>>>>>> temp_branch:FIFO/Fifo_asynchronous/Fifo_asynchronous_1/r_clk_module.v
 wire [(ADDRESS_SIZE): 0] r_bnext;
-
 
 assign r_bnext = (r_en & (!r_empty)) ? (r_bin + 1'b1) : r_bin;
 
@@ -58,24 +47,8 @@ assign r_bnext = (r_en & (!r_empty)) ? (r_bin + 1'b1) : r_bin;
 
 
 
-//Read address 
+//Binary to Gray
 
-<<<<<<< HEAD:FIFO/Fifo_asynchronous/r_clk_module.v
-
-
-d_ff_async #(.SIZE(ADDRESS_SIZE +1))
-	r_bin_reg (.clk(r_clk),
-		   .rst(!rrst_n),
-		   .d(r_bnext),
-		   .q(r_bin));
-
-
-assign r_addr = r_bin[(ADDRESS_SIZE-1): 0];	
-
-       
-   
-       
-=======
 wire [(ADDRESS_SIZE): 0] r_gnext;
 
 binary_to_gray # (.N(ADDRESS_SIZE +1))
@@ -86,31 +59,17 @@ binary_to_gray # (.N(ADDRESS_SIZE +1))
 			       
 	
 			       
->>>>>>> temp_branch:FIFO/Fifo_asynchronous/Fifo_asynchronous_1/r_clk_module.v
 	
 //rptr generation
 
-wire [(ADDRESS_SIZE): 0] r_gnext ;
 
-<<<<<<< HEAD:FIFO/Fifo_asynchronous/r_clk_module.v
-binary_to_gray # (.N(ADDRESS_SIZE +1))
-	r_binary_to_gray_conv (.binary(r_bnext),
-			       .gray(r_gnext));
-
-
-d_ff_async #(.SIZE(ADDRESS_SIZE+1))
-	r_gray_reg (.clk(r_clk),
-=======
-d_ff_async #(.SIZE(ADDRESS_SIZE +1))
+d_ff_async_en #(.SIZE(ADDRESS_SIZE +1))
 	w_ptr_reg (.clk(r_clk),
->>>>>>> temp_branch:FIFO/Fifo_asynchronous/Fifo_asynchronous_1/r_clk_module.v
 		   .rst(!rrst_n),
+		   .en(r_en & (!r_empty)),
 		   .d(r_gnext),
 		   .q(r_ptr));
 
-<<<<<<< HEAD:FIFO/Fifo_asynchronous/r_clk_module.v
-			  
-=======
 
 
 
@@ -118,7 +77,7 @@ d_ff_async #(.SIZE(ADDRESS_SIZE +1))
 
 //Read address generation
 
-wire r_msbnext ;
+wire r_msbnext;
 wire addr_msb;
 
 assign r_msbnext = ( r_gnext[(ADDRESS_SIZE)] ^ r_gnext[(ADDRESS_SIZE -1)] ) ;
@@ -132,7 +91,6 @@ d_ff_async #(.SIZE(1))
 			      
 assign r_addr = {addr_msb , r_ptr[(ADDRESS_SIZE-2): 0]};			       
 			       
->>>>>>> temp_branch:FIFO/Fifo_asynchronous/Fifo_asynchronous_1/r_clk_module.v
 			       
 			       
 	
@@ -142,13 +100,8 @@ assign r_addr = {addr_msb , r_ptr[(ADDRESS_SIZE-2): 0]};
 //Synchronisation of wptr to rclk
 
 wire [(ADDRESS_SIZE): 0] rq2_wptr;
-<<<<<<< HEAD:FIFO/Fifo_asynchronous/r_clk_module.v
 
 two_ff_synchronizer #(.SYNCHRONIZER_SIZE(ADDRESS_SIZE +1 ))
-=======
-2
-2_ff_synchronizer #(.SYNCHRONIZER_SIZE(ADDRESS_SIZE +1 ))
->>>>>>> temp_branch:FIFO/Fifo_asynchronous/Fifo_asynchronous_1/r_clk_module.v
 	sync_w2r (.clk(r_clk),
 		  .rst_n(rrst_n),
 		  .in(w_ptr),
@@ -157,19 +110,19 @@ two_ff_synchronizer #(.SYNCHRONIZER_SIZE(ADDRESS_SIZE +1 ))
 
 
 
-
-
-//Empty signal generation
+//empty signal generation
 
 wire r_empty_temp;
 
 assign r_empty_temp = (r_gnext == rq2_wptr);
 
+
 d_ff_async #(.SIZE(1))
 	r_empty_reg (.clk(r_clk),
-	 	    .rst(!rrst_n),
-		    .d(r_empty_temp),
-		    .q(r_empty));	
+		     .rst(!rrst_n),
+		     .d(r_empty_temp),
+		     .q(r_empty));
+			   
 
 
 

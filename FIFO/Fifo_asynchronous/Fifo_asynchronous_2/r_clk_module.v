@@ -7,7 +7,7 @@ w_ptr,
 r_empty,
 r_addr);
 
-parameter MEMORY_DEPTH;
+
 
 parameter ADDRESS_SIZE;
 
@@ -24,77 +24,56 @@ output [(ADDRESS_SIZE-1): 0] r_addr;
 
 
 
-//Gray to Binary
-
-wire [(ADDRESS_SIZE): 0] rbin;
-
-gray_to_binary #(.N(ADDRESS_SIZE +1))
-	r_gray_to_binary_conv (.gray(r_ptr),
-			     .binary(rbin));
-			     
-	
-			     
-	
-			     
 
 //Conditional incrementation
 
+wire [(ADDRESS_SIZE): 0] r_bin;
 wire [(ADDRESS_SIZE): 0] r_bnext;
 
-assign r_bnext = (r_en & (!r_empty)) ? (rbin + 1'b1) : rbin;
+assign r_bnext = (r_en & (!r_empty)) ? (r_bin + 1'b1) : r_bin ;
 
 
 
 
 
+//Binary register
 
-//Binary to Gray
+d_ff_async #(.SIZE(ADDRESS_SIZE+1))
+	r_binary_reg (.clk(r_clk),
+		      .rst(!rrst_n),
+		      .d(r_bnext),
+		      .q(r_bin));
+		      
+		      
+assign r_addr = r_bin[(ADDRESS_SIZE-1):0];	      		      
+		      
+		      
+		      
+//Binary to Gray logic
 
 wire [(ADDRESS_SIZE): 0] r_gnext;
 
-binary_to_gray # (.N(ADDRESS_SIZE +1))
+binary_to_gray #(.N(ADDRESS_SIZE +1))
 	r_binary_to_gray_conv (.binary(r_bnext),
 			       .gray(r_gnext));
 			       
+
+
+
+
+//Gray register
+
+d_ff_async #(.SIZE(ADDRESS_SIZE+1))
+	r_gray_reg (.clk(r_clk),
+		    .rst(!rrst_n),
+		    .d(r_gnext),
+		    .q(r_ptr));
+		      		       
 			       
-			       
-	
-			       
-	
-//rptr generation
-
-
-d_ff_async #(.SIZE(ADDRESS_SIZE +1))
-	w_ptr_reg (.clk(r_clk),
-		   .rst(!rrst_n),
-		   .d(r_gnext),
-		   .q(r_ptr));
-
-
-
-
-
-
-//Read address generation
-
-wire r_msbnext ;
-wire addr_msb;
-
-assign r_msbnext = ( r_gnext[(ADDRESS_SIZE)] ^ r_gnext[(ADDRESS_SIZE -1)] ) ;
-
-d_ff_async #(.SIZE(1))
-	r_addr_reg (.clk(r_clk),
-		   .rst(!rrst_n),
-		   .d(r_msbnext),
-		   .q(addr_msb)
-		   );       
-			      
-assign r_addr = {addr_msb , r_ptr[(ADDRESS_SIZE-2): 0]};			       
-			       
-			       
+			     
 			       
 	
-			       
+			       		       
 			       
 			       
 //Synchronisation of wptr to rclk
@@ -103,11 +82,11 @@ wire [(ADDRESS_SIZE): 0] rq2_wptr;
 
 wire r_empty_temp;
 
-two_ff_synchronizer #(.SYNCHRONIZER_SIZE(ADDRESS_SIZE +1 ))
+two_ff_synchronizer #(.SYNCHRONIZER_SIZE(ADDRESS_SIZE+1))
 	sync_w2r (.clk(r_clk),
 		  .rst_n(rrst_n),
 		  .in(w_ptr),
-		  .out(rqw_wptr)
+		  .out(rq2_wptr)
 		  );
 
 
@@ -115,14 +94,14 @@ two_ff_synchronizer #(.SYNCHRONIZER_SIZE(ADDRESS_SIZE +1 ))
 //empty signal generation
 
 
-assign r_empty = (r_gnext == rq2_wptr);
+assign r_empty_temp = (r_gnext == rq2_wptr);
 
 
 d_ff_async #(.SIZE(1))
 	r_empty_reg (.clk(r_clk),
-			.rst(!rrst_n),
-			   .d(r_empty_temp),
-			   .q(r_empty));			   
+		     .rst(!rrst_n),
+		     .d(r_empty_temp),
+		     .q(r_empty));	   
 			   
 
 

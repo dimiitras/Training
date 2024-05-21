@@ -1,6 +1,5 @@
-`timescale 1ns/1ps
 //`define CLK_PERIOD 10
-
+`timescale 1ns/1ps
 
 module fifo_async_tb ();
 
@@ -49,17 +48,22 @@ initial
 begin
 	w_clk = 1'b0;
 	r_clk = 1'b0;
+	
 	wrst_n = 1'b0;
 	rrst_n = 1'b0;
+	
 	w_en = 1'b0;
 	r_en = 1'b0;
+	
 	wdata = {MEMORY_WIDTH{1'b0}};
 	
 	#13;
+	
 	wrst_n = 1'b1;
 	rrst_n = 1'b1;
+	
 	main;
-	#1500; 
+	
 	$stop;
 end
 
@@ -77,6 +81,7 @@ begin
 	
 	Write;
 	Read;
+
 end
 endtask
 
@@ -85,7 +90,7 @@ endtask
   
 task Write;
 begin
-		#20;
+		#10;
 		w_en = 1'b1;
 		for(i=0; i < 5; i = i +1) begin
 		@(posedge w_clk)
@@ -93,6 +98,7 @@ begin
 			wdata = wdata + 1'b1;
 		end
 		end
+		#20;
 		w_en = 1'b0;
 
 end
@@ -100,10 +106,11 @@ endtask
 
 task Read;
 begin
+		#3;
 		r_en = 1'b1;
+
 		#100;
 		r_en = 1'b0;
-
 
 end
 endtask

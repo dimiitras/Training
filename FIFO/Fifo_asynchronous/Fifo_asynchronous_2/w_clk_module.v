@@ -24,76 +24,53 @@ output [(ADDRESS_SIZE-1): 0] w_addr;
 
 
 
-
-//Gray to Binary
-
-wire [(ADDRESS_SIZE): 0] wbin;
-
-gray_to_binary #(.N(ADDRESS_SIZE +1))
-	w_gray_to_binary_conv (.gray(w_ptr),
-			     .binary(wbin));
-			     
-	
-			     
-	
-			     
-
 //Conditional incrementation
 
+wire [(ADDRESS_SIZE): 0] w_bin;
 wire [(ADDRESS_SIZE): 0] w_bnext;
 
-assign w_bnext = (w_en & (!w_full)) ? (wbin + 1'b1) : wbin;
+assign w_bnext = (w_en & (!w_full)) ? (w_bin + 1'b1) : w_bin ;
 
 
 
 
 
+//Binary register
 
-//Binary to Gray
+d_ff_async #(.SIZE(ADDRESS_SIZE+1))
+	w_binary_reg (.clk(w_clk),
+		      .rst(!wrst_n),
+		      .d(w_bnext),
+		      .q(w_bin));
+		      
+assign w_addr = w_bin[(ADDRESS_SIZE-1):0];	      
+		      	      
+		
+		      
+		      
+//Binary to Gray logic
 
 wire [(ADDRESS_SIZE): 0] w_gnext;
 
-binary_to_gray # (.N(ADDRESS_SIZE +1))
+binary_to_gray #(.N(ADDRESS_SIZE +1))
 	w_binary_to_gray_conv (.binary(w_bnext),
 			       .gray(w_gnext));
 			       
-			       
-			       
-	
-			       
-	
-//wptr generation
 
+
+
+
+//Gray register
 
 d_ff_async #(.SIZE(ADDRESS_SIZE+1))
-	w_ptr_reg (.clk(w_clk),
-		   .rst(!wrst_n),
-		   .d(w_gnext),
-		   .q(w_ptr));
-
-
-
-
-
-
-//Write address generation
-
-wire w_msbnext ;
-wire addr_msb;
-
-assign w_msbnext = ( w_gnext[(ADDRESS_SIZE)] ^ w_gnext[(ADDRESS_SIZE -1)] ) ;
-
-d_ff_async #(.SIZE(1))
-	w_addr_reg (.clk(w_clk),
-		   .rst(!wrst_n),
-		   .d(w_msbnext),
-		   .q(addr_msb));       
-			      
-assign w_addr = {addr_msb , w_ptr[(ADDRESS_SIZE-2): 0]};			       
+	w_gray_reg (.clk(w_clk),
+		    .rst(!wrst_n),
+		    .d(w_gnext),
+		    .q(w_ptr));
+		      		       
 			       
-			       
-			       
-	
+			     
+			       	
 			       
 			       
 			       
@@ -101,7 +78,7 @@ assign w_addr = {addr_msb , w_ptr[(ADDRESS_SIZE-2): 0]};
 
 wire [(ADDRESS_SIZE): 0] wq2_rptr;
 
-two_ff_synchronizer #(.SYNCHRONIZER_SIZE(ADDRESS_SIZE +1 ))
+two_ff_synchronizer #(.SYNCHRONIZER_SIZE(ADDRESS_SIZE+1))
 	sync_r2w (.clk(w_clk),
 		  .rst_n(wrst_n),
 		  .in(r_ptr),
@@ -124,13 +101,13 @@ assign f2 = (!(wq2_rptr[ADDRESS_SIZE-1] == w_gnext[ADDRESS_SIZE-1]));
 assign f3 = (wq2_rptr[(ADDRESS_SIZE-2) :0] == w_gnext[(ADDRESS_SIZE-2) :0]);
 
 
-assign wfull_temp = (f1 & f2 & f3);
+assign w_full_temp = (f1 & f2 & f3);
 
 d_ff_async #(.SIZE(1))
 	w_full_reg (.clk(w_clk),
-			.rst(!wrst_n),
-			   .d(w_full_temp),
-			   .q(w_full));			   
+		    .rst(!wrst_n),
+		    .d(w_full_temp),
+	            .q(w_full));			   
 			   
 
 

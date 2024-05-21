@@ -30,6 +30,7 @@ output w_full;
 output [(MEMORY_WIDTH-1): 0] rdata;
 
 
+
 wire [(ADDRESS_SIZE): 0] r_ptr;
 wire [(ADDRESS_SIZE): 0] w_ptr;
 

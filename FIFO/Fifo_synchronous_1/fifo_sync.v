@@ -3,10 +3,10 @@ clk,
 rst,
 w_en,
 r_en,
-WR,
-FULL,
-EMPTY,
-RD);
+wdata,
+full,
+empty,
+rdata);
 
 
 parameter MEMORY_WIDTH = 4;
@@ -18,11 +18,11 @@ input clk;
 input rst;
 input w_en;
 input r_en;
-input [(MEMORY_WIDTH-1):0] WR;
+input [(MEMORY_WIDTH-1):0] wdata;
 
-output FULL;
-output EMPTY;
-output [(MEMORY_WIDTH-1):0] RD;
+output full;
+output empty;
+output [(MEMORY_WIDTH-1):0] rdata;
 
 
 
@@ -30,19 +30,19 @@ output [(MEMORY_WIDTH-1):0] RD;
 //Counter for w_ptr
 
 wire cw_en ;
-assign cw_en = (w_en & (!FULL));
+assign cw_en = (w_en & (!full));
 
-reg [(MEMORY_DEPTH-1):0] count_w_in;
-wire [(MEMORY_DEPTH-1):0] w_ptr; /*count_out*/
+reg [(ADDRESS_SIZE-1):0] count_w_in;
+wire [(ADDRESS_SIZE-1):0] w_ptr; /*count_out*/
 
 
 wire w_max;
-assign w_max = (w_ptr == (ADDRESS_SIZE -1));
+assign w_max = (w_ptr == (MEMORY_DEPTH -1));
 
 wire w_wrap_up ;
 assign w_wrap_up = ( w_max);
 
-d_ff_async_en  #(.SIZE(ADDRESS_SIZE))
+d_ff_async_en  #(.SIZE(ADDRESS_SIZE+1))
  counter_write_address(.clk(clk),
 		       .rst(rst),
 		       .en(cw_en),
@@ -64,12 +64,12 @@ end
 
 wire [(ADDRESS_SIZE-1):0] r_ptr;
 
-wire cr_en = (r_en & (!EMPTY));
+wire cr_en = (r_en & (!empty));
 
 reg [(ADDRESS_SIZE-1):0] count_r_in;
 
 
-d_ff_async_en  #(.SIZE(ADDRESS_SIZE))
+d_ff_async_en  #(.SIZE(ADDRESS_SIZE+1))
  counter_read_address(.clk(clk),
 		      .rst(rst),
 		      .en(cr_en),
@@ -113,14 +113,14 @@ d_ff_async_en  #(.SIZE(1'b1))
 
 
 
-assign FULL = (eq & Q);
+assign full = (eq & Q);
 
 
 
 
 //EMPTY signal generation
 
-assign EMPTY = (!Q & eq);
+assign empty = (!Q & eq);
 
 
 
@@ -137,7 +137,7 @@ assign read = (r_en & (!FULL));*/
 
 always@(posedge clk) begin
 	if(cw_en) 
-		memory[w_ptr] <= WR;		
+		memory[w_ptr] <= wdata;		
 	
 end
 
@@ -146,9 +146,9 @@ end
 d_ff_async_en #(.SIZE(MEMORY_WIDTH))
 	read_out(.clk(clk),
 		 .rst(rst),
-		 .en((r_en & (!EMPTY))),
+		 .en((r_en & (!empty))),
 		 .d(memory[r_ptr]),
-		 .q(RD));
+		 .q(rdata));
 	
 
 

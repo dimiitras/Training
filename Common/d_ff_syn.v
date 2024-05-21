@@ -12,7 +12,7 @@ input [(SIZE-1):0] d;
 output reg [(SIZE-1):0] q;
 
 
-always@(posedge clk, posedge rst) begin
+always@(posedge clk) begin
 	if(rst) 
 		q <= {SIZE{1'b0}};
 	else

@@ -14,11 +14,8 @@ rdata);
 parameter MEMORY_DEPTH;
 parameter MEMORY_WIDTH;
 
-<<<<<<< HEAD:FIFO/Fifo_asynchronous/fifo_async_top_module.v
+
 parameter ADDRESS_SIZE;
-=======
-parameter ADRESS_SIZE;
->>>>>>> temp_branch:FIFO/Fifo_asynchronous/Fifo_asynchronous_1/fifo_async_top_module.v
 
 
 input w_clk;
