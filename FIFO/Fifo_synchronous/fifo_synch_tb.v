@@ -65,6 +65,8 @@ begin
 	
 	Write;
 	Read;
+	Write;
+	Read;
 end
 endtask
 
@@ -74,7 +76,7 @@ endtask
 task Write;
 begin
 		w_en = 1'b1;
-		for(i=0; i < 3; i = i +1) begin
+		for(i=0; i < 4; i = i +1) begin
 		@(posedge clk)
 		begin
 			wdata = wdata + 1'b1;
@@ -89,7 +91,7 @@ endtask
 task Read;
 begin
 		r_en = 1'b1;
-		#(CLK_PERIOD *3)
+		#(CLK_PERIOD *5)
 		r_en = 1'b0;
 
 

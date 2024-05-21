@@ -78,7 +78,7 @@ d_ff_async_en  #(.SIZE(ADDRESS_SIZE+1))
 	
 
 wire r_max;
-assign r_max = (r_ptr == (ADDRESS_SIZE -1));
+assign r_max = (r_ptr == (MEMORY_DEPTH -1));
 
 wire r_wrap_up ;
 assign r_wrap_up = (rst | r_max);
