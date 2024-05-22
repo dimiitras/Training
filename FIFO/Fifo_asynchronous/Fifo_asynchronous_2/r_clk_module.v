@@ -17,7 +17,7 @@ input r_en;
 input rrst_n;
 input [(ADDRESS_SIZE): 0] w_ptr;
 
-output r_empty;
+output reg r_empty;
 output [(ADDRESS_SIZE): 0] r_ptr;
 output [(ADDRESS_SIZE-1): 0] r_addr;
 
@@ -30,13 +30,27 @@ output [(ADDRESS_SIZE-1): 0] r_addr;
 wire [(ADDRESS_SIZE): 0] r_bin;
 wire [(ADDRESS_SIZE): 0] r_bnext;
 
-assign r_bnext = (r_en & (!r_empty)) ? (r_bin + 1'b1) : r_bin ;
+wire r_en_dly;
+
+
+
+d_ff_async #(.SIZE(1))
+	r_enable_reg (.clk(r_clk),
+		      .rst(!rrst_n),
+		      .d(r_en),
+		      .q(r_en_dly));
+		      
 
 
 
 
+assign r_bnext = (r_en_dly & (!r_empty)) ? (r_bin + 1'b1) : r_bin ;    /*delay control signal (r_en_dly), so that r_bnext 
+									doesn't increment before the r_clk posedge 
+									and r_addr increments correctly.*/
 
-//Binary register
+
+
+//Binary register (saves the next binary value for read address)
 
 d_ff_async #(.SIZE(ADDRESS_SIZE+1))
 	r_binary_reg (.clk(r_clk),
@@ -80,7 +94,7 @@ d_ff_async #(.SIZE(ADDRESS_SIZE+1))
 
 wire [(ADDRESS_SIZE): 0] rq2_wptr;
 
-wire r_empty_temp;
+
 
 two_ff_synchronizer #(.SYNCHRONIZER_SIZE(ADDRESS_SIZE+1))
 	sync_w2r (.clk(r_clk),
@@ -93,15 +107,25 @@ two_ff_synchronizer #(.SYNCHRONIZER_SIZE(ADDRESS_SIZE+1))
 
 //empty signal generation
 
+wire r_empty_temp;
+wire [(ADDRESS_SIZE): 0] r_gnext_less;
+wire [(ADDRESS_SIZE): 0] r_bnext_less;
 
-assign r_empty_temp = (r_gnext == rq2_wptr);
+assign r_bnext_less = (r_bnext - 1'b1);
 
 
-d_ff_async #(.SIZE(1))
-	r_empty_reg (.clk(r_clk),
-		     .rst(!rrst_n),
-		     .d(r_empty_temp),
-		     .q(r_empty));	   
+binary_to_gray #(.N(ADDRESS_SIZE +1))
+	r_bnext_less_conv (.binary(r_bnext_less),
+			   .gray(r_gnext_less));
+
+
+assign r_empty_temp = (r_gnext_less == rq2_wptr);		       
+
+		     
+always@(posedge r_clk) begin
+	if(!rrst_n) r_empty <= 1'b1;	/*reset r_empty to 1*/
+	else r_empty <= r_empty_temp;   
+end  
 			   
 
 

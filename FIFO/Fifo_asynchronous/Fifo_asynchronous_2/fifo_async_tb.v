@@ -81,6 +81,14 @@ begin
 	
 	Write;
 	Read;
+	Write;
+	Read;
+	Write;
+	Read;
+	Write;
+	Read;
+	Write;
+	Read;
 
 end
 endtask

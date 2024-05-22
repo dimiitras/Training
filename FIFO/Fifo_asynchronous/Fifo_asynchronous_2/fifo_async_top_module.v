@@ -71,20 +71,20 @@ reg [(MEMORY_WIDTH -1) :0] memory [(MEMORY_DEPTH -1) :0];
 
 
 
-
-
 //Write
+
 
 wire cw_en ;
 
 assign cw_en = (w_en & (!w_full));
+
+
 
 always@(posedge w_clk) begin
 	if(cw_en) 
 		memory[w_addr] <= wdata;		
 	
 end
-
 
 
 
