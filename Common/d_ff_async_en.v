@@ -5,7 +5,7 @@ en,
 d,
 q);
 
-parameter SIZE;
+parameter SIZE = 1;
 
 input clk;
 input rst;

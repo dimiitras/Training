@@ -38,6 +38,9 @@ wire [(ADDRESS_SIZE-1): 0] w_addr;
 wire [(ADDRESS_SIZE-1): 0] r_addr;
 
 
+`include "w_clk_module.v";
+`include "r_clk_module.v";
+
 
 w_clk_module #(.ADDRESS_SIZE(ADDRESS_SIZE))
 	write_clk_block (.w_clk(w_clk),
@@ -47,6 +50,7 @@ w_clk_module #(.ADDRESS_SIZE(ADDRESS_SIZE))
 			.w_ptr(w_ptr),
 			.w_full(w_full),
 			.w_addr(w_addr));
+
 
 
 
@@ -61,7 +65,7 @@ r_clk_module #(.ADDRESS_SIZE(ADDRESS_SIZE))
 
 
 
-
+assert 1 = 0;
 
 
 //Memory
@@ -77,7 +81,6 @@ reg [(MEMORY_WIDTH -1) :0] memory [(MEMORY_DEPTH -1) :0];
 wire cw_en ;
 
 assign cw_en = (w_en & (!w_full));
-
 
 
 always@(posedge w_clk) begin

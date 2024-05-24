@@ -1,4 +1,4 @@
-module w_clk_module (
+module w_clk_module_1 (
 w_clk,
 w_en,
 wrst_n,
@@ -20,6 +20,10 @@ output [(ADDRESS_SIZE): 0] w_ptr;
 output [(ADDRESS_SIZE-1): 0] w_addr;
 
 
+
+/*`include "d_ff_asyn.v";
+`include "d_ff_asyn_en.v";
+`include "two_ff_synchronizer.v";*/
 
 
 
@@ -80,17 +84,25 @@ d_ff_async_en #(.SIZE(ADDRESS_SIZE +1))
 
 wire w_msbnext ;
 wire addr_msb;
+wire [(ADDRESS_SIZE): 0] w_addr_g;
 
 assign w_msbnext = ( w_gnext[(ADDRESS_SIZE)] ^ w_gnext[(ADDRESS_SIZE -1)] ) ;
 
 d_ff_async #(.SIZE(1))
-	w_addr_reg (.clk(w_clk),
+	w_addrmsb_reg (.clk(w_clk),
 		   .rst(!wrst_n),
 		   .d(w_msbnext),
 		   .q(addr_msb));       
+		   
 			      
-assign w_addr = {addr_msb , w_ptr[(ADDRESS_SIZE-2): 0]};			       
-			       
+assign w_addr_g = {addr_msb , w_ptr[(ADDRESS_SIZE-2): 0]};
+
+		       
+
+gray_to_binary #(.N(ADDRESS_SIZE))
+	w_addr_gray_to_binary (.gray(w_addr_g),
+			       .binary(w_addr));
+			    			       
 			       
 			       
 	
@@ -131,5 +143,25 @@ d_ff_async_en #(.SIZE(1))
 		    .d(w_full_temp),
 	            .q(w_full));	
 
+
+
+/*
+//Simulation
+
+property full_flag_rise;
+@(posedge w_clk) (f1 & f2 & f3) |=> w_full;
+endproperty
+
+  assert property (full_flag_rise)
+    display ("full flag");
+    else ("full flag didn't rise");
+ 
+
+property w_en_fall;
+@(posedge w_clk) w_full |=> (!w_en);
+endproperty
+
+assert property (w_en_fall) else $error("w_en didn't fall after full flag");
+*/
 
 endmodule

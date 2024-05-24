@@ -1,4 +1,4 @@
-module fifo_async_top_module (
+module fifo_async_top_module_1 (
 w_clk,
 w_en,
 wrst_n,
@@ -39,7 +39,12 @@ wire [(ADDRESS_SIZE-1): 0] r_addr;
 
 
 
-w_clk_module #(.ADDRESS_SIZE(ADDRESS_SIZE))
+`include "w_clk_module.v";
+`include "r_clk_module.v";
+
+
+
+w_clk_module_1 #(.ADDRESS_SIZE(ADDRESS_SIZE))
 	write_clk_block (.w_clk(w_clk),
 			.w_en(w_en),
 			.wrst_n(wrst_n),
@@ -50,7 +55,7 @@ w_clk_module #(.ADDRESS_SIZE(ADDRESS_SIZE))
 
 
 
-r_clk_module #(.ADDRESS_SIZE(ADDRESS_SIZE))
+r_clk_module_1 #(.ADDRESS_SIZE(ADDRESS_SIZE))
 	read_clk_block (.r_clk(r_clk),
 			.r_en(r_en),
 			.rrst_n(rrst_n),

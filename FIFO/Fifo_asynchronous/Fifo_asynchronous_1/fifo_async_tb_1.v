@@ -1,14 +1,15 @@
 //`define CLK_PERIOD 10
 `timescale 1ns/1ps
 
-module fifo_async_tb ();
+module fifo_async_tb_1 ();
 
 parameter MEMORY_WIDTH = 4;
 parameter MEMORY_DEPTH = 4;
 
 parameter ADDRESS_SIZE = 2;
 
-parameter CLK_PERIOD = 10;
+parameter W_CLK_PERIOD = 5;
+parameter R_CLK_PERIOD = 10;
 
 integer i;
 
@@ -25,9 +26,10 @@ wire w_full;
 wire [(MEMORY_WIDTH-1): 0] rdata;
 
 
+//`include "design.v";
 
 
-fifo_async_top_module #(.MEMORY_DEPTH(MEMORY_DEPTH),
+fifo_async_top_module_1 #(.MEMORY_DEPTH(MEMORY_DEPTH),
 			.MEMORY_WIDTH(MEMORY_WIDTH),
 	     		.ADDRESS_SIZE(ADDRESS_SIZE))
   fifo_asynchronous (.w_clk(w_clk),
@@ -71,14 +73,20 @@ end
 
 
 
-always #(CLK_PERIOD/2)  w_clk = ~ w_clk;
-always #(CLK_PERIOD)    r_clk = ~ r_clk;
+always #(W_CLK_PERIOD)  w_clk = ~ w_clk;
+always #(R_CLK_PERIOD)  r_clk = ~ r_clk;
 
 
 
 task main; 
 begin
 	
+	Write;
+	Read;
+	Write;
+	Read;
+	Write;
+	Read;
 	Write;
 	Read;
 

@@ -26,6 +26,9 @@ wire [(MEMORY_WIDTH-1): 0] rdata;
 
 
 
+//`include "design.v";
+
+
 
 fifo_async_top_module #(.MEMORY_DEPTH(MEMORY_DEPTH),
 			.MEMORY_WIDTH(MEMORY_WIDTH),
@@ -40,9 +43,6 @@ fifo_async_top_module #(.MEMORY_DEPTH(MEMORY_DEPTH),
 		     .r_empty(r_empty),
 		     .w_full(w_full),
 		     .rdata(rdata));
-     
-		     
-		     
 
 initial
 begin
@@ -123,23 +123,6 @@ begin
 end
 endtask
 
-/*task Write_Read;
-begin
-
-	w_en = 1'b1;
-	@(posedge clk);
-	WR= 1;
-	@(posedge clk);
-	r_en = 1'b1;
-	@(posedge clk);
-	@(posedge clk);
-	w_en = 1'b1;
-	WR = 2;
-	@(posedge clk);
-	@(posedge clk);
-	r_en = 1'b1;
-end
-endtask*/
 
 
 

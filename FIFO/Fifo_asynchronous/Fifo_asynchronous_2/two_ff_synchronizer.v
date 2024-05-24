@@ -15,7 +15,7 @@ output [(SYNCHRONIZER_SIZE-1):0] out;
 
 wire [(SYNCHRONIZER_SIZE-1):0] in2;
 
-
+// `include "d_ff_async.v";
 
 d_ff_async #(.SIZE(SYNCHRONIZER_SIZE))
 	synchronizer_ff_1 (.clk(clk),
