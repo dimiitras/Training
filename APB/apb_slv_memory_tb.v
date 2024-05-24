@@ -17,7 +17,7 @@ wire PREADY;
 wire [(DATA_SIZE-1) :0] PRDATA;
 wire PSLVERR;
 
-apb_slv_memory #(.DATA_SIZE(DATA_SIZE), .ADDR_SIZE(ADDR_SIZE))
+apb_slv_memory_reg #(.DATA_SIZE(DATA_SIZE), .ADDR_SIZE(ADDR_SIZE))
 			i1(PCLK,
                 PRESETn,
                 PADDR,
@@ -39,9 +39,9 @@ end
 
 //reset
 initial begin
- PRESETn = 1'b1;
- #10;
  PRESETn = 1'b0;
+ #10;
+ PRESETn = 1'b1;
 end
 
 //enable

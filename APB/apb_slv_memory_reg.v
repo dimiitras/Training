@@ -80,7 +80,7 @@ d_ff #(.D_SIZE(1))
 assign PRDATA_en = !addr_max & R_1 & !PWRITE;
 assign PRDATA_temp = memory[PADDR];
 
-(* DONT_TOUCH = "yes" *) d_ff_en #(.D_SIZE(DATA_SIZE))
+/*(* DONT_TOUCH = "yes" *)*/ d_ff_en #(.D_SIZE(DATA_SIZE))
 	d_rdata (
 	.clk(PCLK),
 	.resetn(PRESETn),
@@ -109,5 +109,21 @@ d_ff_en #(.D_SIZE(1))
 	.d(R_1),
 	.q(PREADY));
 	
+
+//Assertions
+
+  
+property enable;
+@(posedge PCLK) PSEL |=> (PENABLE);
+endproperty
+
+assert property (enable) else $error("enable error");
+
+property ready;
+@(posedge PCLK) PENABLE |-> (PREADY);
+endproperty
+
+assert property (ready) else $error("ready error");
+
 
 endmodule

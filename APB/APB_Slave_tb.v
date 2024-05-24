@@ -44,7 +44,7 @@ initial begin
   
   always  #1  PCLK = ~PCLK;
  
-  apb_slv_memory_reg #(.DATA_SIZE(`DATAWIDTH), .ADDR_SIZE(`ADDRWIDTH))
+  apb_slv_memory_final #(.DATA_SIZE(`DATAWIDTH), .ADDR_SIZE(`ADDRWIDTH))
 			DUT(.PCLK(PCLK),
 				.PRESETn(PRESETn),
 				.PADDR(PADDR),

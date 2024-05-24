@@ -39,10 +39,10 @@ wire [(ADDRESS_SIZE-1): 0] r_addr;
 
 
 
-`include "w_clk_module.v";
+/*`include "w_clk_module.v";
 `include "r_clk_module.v";
 
-
+*/
 
 w_clk_module_1 #(.ADDRESS_SIZE(ADDRESS_SIZE))
 	write_clk_block (.w_clk(w_clk),

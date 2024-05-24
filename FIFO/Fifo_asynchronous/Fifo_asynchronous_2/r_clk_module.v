@@ -134,7 +134,7 @@ end
 
 
 /*
-//Simulation
+//Assertions
 
   property empty_flag_rise;
 @(posedge r_clk) disable iff(!rrst_n) (r_gnext == rq2_wptr) |=> r_empty;
