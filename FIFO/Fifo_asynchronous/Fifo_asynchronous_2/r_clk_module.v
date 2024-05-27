@@ -31,8 +31,9 @@ output [(ADDRESS_SIZE-1): 0] r_addr;
 `include "two_ff_synchronizer.v";
 */
 
+/*
 
-//Conditional incrementation
+//Conditional incrementation (v1)
 
 wire [(ADDRESS_SIZE): 0] r_bin;
 wire [(ADDRESS_SIZE): 0] r_bnext;
@@ -52,14 +53,11 @@ d_ff_async #(.SIZE(1))
 
 
 assign r_bnext = (r_en_dly & (!r_empty)) ? (r_bin + 1'b1) : r_bin ;    
-									//delay control signal (r_en_dly), so that r_bnext 
-									//doesn't increment before the r_clk posedge 
-									//and r_addr increments correctly.
+									
 
 
 
-
-//Binary register (saves the next binary value for read address)
+//Binary register (saves the next binary value for read address) (v1)
 
 d_ff_async #(.SIZE(ADDRESS_SIZE+1))
 	r_binary_reg (.clk(r_clk),
@@ -72,8 +70,42 @@ assign r_addr = r_bin[(ADDRESS_SIZE-1):0];
 		      
 
 
-		      
-		      
+*/	
+//v2 => Put mux after binary register (smaller critical path)
+//Binary register (v2)
+
+wire [(ADDRESS_SIZE): 0] r_bin;
+wire [(ADDRESS_SIZE): 0] r_bnext;
+
+
+d_ff_async #(.SIZE(ADDRESS_SIZE+1))
+	r_binary_reg (.clk(r_clk),
+		      .rst(!rrst_n),
+		      .d(r_bnext),
+		      .q(r_bin));		
+
+
+assign r_addr = r_bin[(ADDRESS_SIZE-1):0];	      		      
+
+
+//Conditional incrementation (v2)
+
+
+wire r_en_dly;
+
+d_ff_async #(.SIZE(1))
+	r_enable_reg (.clk(r_clk),
+		      .rst(!rrst_n),
+		      .d(r_en),
+		      .q(r_en_dly));                                    //delay control signal (r_en_dly), so that r_bnext 
+									//doesn't increment before the r_clk posedge 
+									//and r_addr increments correctly.	      
+	       		       
+assign r_bnext = (r_en_dly & (!r_empty)) ? (r_bin + 1'b1) : r_bin ;    			      
+
+
+
+
 //Binary to Gray logic
 
 wire [(ADDRESS_SIZE): 0] r_gnext;
@@ -82,6 +114,25 @@ binary_to_gray #(.N(ADDRESS_SIZE +1))
 	r_binary_to_gray_conv (.binary(r_bnext),
 			       .gray(r_gnext));
 			       
+
+
+			       
+			       
+//Synchronisation of wptr to rclk
+
+wire [(ADDRESS_SIZE): 0] rq2_wptr;
+
+
+
+two_ff_synchronizer #(.SYNCHRONIZER_SIZE(ADDRESS_SIZE+1))
+	sync_w2r (.clk(r_clk),
+              .rst_n(rrst_n),
+		  .in(w_ptr),
+		  .out(rq2_wptr)
+		  );
+
+	      
+		    
 
 
 
@@ -98,24 +149,6 @@ d_ff_async #(.SIZE(ADDRESS_SIZE+1))
 			       
 			     
 			       
-	
-			       		       
-			       
-			       
-//Synchronisation of wptr to rclk
-
-wire [(ADDRESS_SIZE): 0] rq2_wptr;
-
-
-
-two_ff_synchronizer #(.SYNCHRONIZER_SIZE(ADDRESS_SIZE+1))
-	sync_w2r (.clk(r_clk),
-              .rst_n(rrst_n),
-		  .in(w_ptr),
-		  .out(rq2_wptr)
-		  );
-
-
 
 
 
@@ -158,6 +191,7 @@ assign r_almost_empty = ((r_gnext_less == rq2_wptr) & r_en);
 
 
 
+
 /*
 //Assertions
 
@@ -172,7 +206,7 @@ property r_en_fall;
 @(posedge r_clk) r_empty |=> (!r_en);
 endproperty
 
-  assert property (r_en_fall) else $error("r_en didn't fall after empty flag");
+assert property (r_en_fall) else $error("r_en didn't fall after empty flag");
 
 */
 endmodule

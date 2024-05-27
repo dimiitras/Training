@@ -27,8 +27,8 @@ output [(ADDRESS_SIZE-1): 0] w_addr;
 `include "d_ff_asyn_en.v";
 `include "two_ff_synchronizer.v";*/
 
-
-//Conditional incrementation
+/*
+//Conditional incrementation (v1)
 
 wire [(ADDRESS_SIZE): 0] w_bin;
 wire [(ADDRESS_SIZE): 0] w_bnext;
@@ -37,7 +37,7 @@ wire [(ADDRESS_SIZE): 0] w_bnext;
 assign w_bnext = (w_en & (!w_full)) ? (w_bin + 1'b1) : w_bin ;
 
 
-//Binary register
+//Binary register (v1)
 
 d_ff_async #(.SIZE(ADDRESS_SIZE+1))
 	w_binary_reg (.clk(w_clk),
@@ -48,9 +48,34 @@ d_ff_async #(.SIZE(ADDRESS_SIZE+1))
 assign w_addr = w_bin[(ADDRESS_SIZE-1):0];	      
 		      	      
 		
+*/	      
+
+//v2 => Put mux after binary register (smaller critical path)
+//Binary register (v2)
+
+wire [(ADDRESS_SIZE): 0] w_bin;
+wire [(ADDRESS_SIZE): 0] w_bnext;
+
+
+d_ff_async #(.SIZE(ADDRESS_SIZE+1))
+	w_binary_reg (.clk(w_clk),
+		      .rst(!wrst_n),
+		      .d(w_bnext),
+		      .q(w_bin));		
+
+
+assign w_addr = w_bin[(ADDRESS_SIZE-1):0];	      		      
+
+
+//Conditional incrementation (v2)
+
 		      
+	       		       
+assign w_bnext = (w_en & (!w_full)) ? (w_bin + 1'b1) : w_bin ;
+
+
 		      
-//Binary to Gray logic
+//Binary to Gray logic 
 
 wire [(ADDRESS_SIZE): 0] w_gnext;
 
