@@ -22,6 +22,7 @@ output [(ADDRESS_SIZE): 0] w_ptr;
 output [(ADDRESS_SIZE-1): 0] w_addr;
 
 
+//For EDA PLAYGROUND :
 /*`include "d_ff_asyn.v";
 `include "d_ff_asyn_en.v";
 `include "two_ff_synchronizer.v";*/

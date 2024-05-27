@@ -15,6 +15,8 @@ output [(SYNCHRONIZER_SIZE-1):0] out;
 
 wire [(SYNCHRONIZER_SIZE-1):0] in2;
 
+
+//For EDA PLAYGROUND :
 // `include "d_ff_async.v";
 
 d_ff_async #(.SIZE(SYNCHRONIZER_SIZE))

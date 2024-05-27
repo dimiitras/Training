@@ -21,12 +21,14 @@ reg rrst_n;
 reg [(MEMORY_WIDTH-1): 0] wdata;
 
 wire r_empty;
+wire r_almost_empty;
 wire w_full;
 wire [(MEMORY_WIDTH-1): 0] rdata;
 
 
 
-//`include "design.v";
+//For EDA PLAYGROUND :
+//`include "fifo_async_top_module.v";
 
 
 

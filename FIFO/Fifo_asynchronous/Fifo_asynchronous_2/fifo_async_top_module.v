@@ -8,6 +8,7 @@ rrst_n,
 wdata,
 
 r_empty,
+r_almost_empty,
 w_full,
 rdata);
 
@@ -26,6 +27,7 @@ input rrst_n;
 input [(MEMORY_WIDTH-1): 0] wdata;
 
 output r_empty;
+output r_almost_empty;
 output w_full;
 output [(MEMORY_WIDTH-1): 0] rdata;
 
@@ -38,9 +40,10 @@ wire [(ADDRESS_SIZE-1): 0] w_addr;
 wire [(ADDRESS_SIZE-1): 0] r_addr;
 
 
-`include "w_clk_module.v";
+//For EDA PLAYGROUND :
+/*`include "w_clk_module.v";
 `include "r_clk_module.v";
-
+*/
 
 w_clk_module #(.ADDRESS_SIZE(ADDRESS_SIZE))
 	write_clk_block (.w_clk(w_clk),
@@ -61,11 +64,11 @@ r_clk_module #(.ADDRESS_SIZE(ADDRESS_SIZE))
 			.w_ptr(w_ptr),
 			.r_ptr(r_ptr),
 			.r_empty(r_empty),
+			.r_almost_empty(r_almost_empty),
 			.r_addr(r_addr));
 
 
 
-assert 1 = 0;
 
 
 //Memory
