@@ -2,7 +2,7 @@ module binary_to_gray (
 binary,
 gray);
 
-parameter N;
+parameter N =1;
 
 inout [(N-1) :0] binary;
 

@@ -9,13 +9,13 @@ w_addr);
 
 
 
-parameter ADDRESS_SIZE;
+parameter ADDRESS_SIZE  = 1;
 
 
 input w_clk;
 input w_en;
 input wrst_n;
-input [(ADDRESS_SIZE): 0] r_ptr;
+(* ASYNC_REG = "TRUE" *)input [(ADDRESS_SIZE): 0] r_ptr;
 
 output w_full;
 output [(ADDRESS_SIZE): 0] w_ptr;
@@ -27,28 +27,7 @@ output [(ADDRESS_SIZE-1): 0] w_addr;
 `include "d_ff_asyn_en.v";
 `include "two_ff_synchronizer.v";*/
 
-/*
-//Conditional incrementation (v1)
 
-wire [(ADDRESS_SIZE): 0] w_bin;
-wire [(ADDRESS_SIZE): 0] w_bnext;
-
-		      
-assign w_bnext = (w_en & (!w_full)) ? (w_bin + 1'b1) : w_bin ;
-
-
-//Binary register (v1)
-
-d_ff_async #(.SIZE(ADDRESS_SIZE+1))
-	w_binary_reg (.clk(w_clk),
-		      .rst(!wrst_n),
-		      .d(w_bnext),
-		      .q(w_bin));
-		      
-assign w_addr = w_bin[(ADDRESS_SIZE-1):0];	      
-		      	      
-		
-*/	      
 
 //v2 => Put mux after binary register (smaller critical path)
 //Binary register (v2)
@@ -138,7 +117,7 @@ d_ff_async #(.SIZE(1))
 
 
 /*
-//Simulation
+//Assertions
 
 property full_flag_rise;
 @(posedge w_clk) (f1 & f2 & f3) |=> w_full;
