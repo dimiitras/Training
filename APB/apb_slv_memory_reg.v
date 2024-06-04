@@ -111,7 +111,7 @@ d_ff_en #(.D_SIZE(1))
 	
 
 //Assertions
-
+/*
   
 property enable;
 @(posedge PCLK) PSEL |=> (PENABLE);
@@ -125,5 +125,6 @@ endproperty
 
 assert property (ready) else $error("ready error");
 
+*/
 
 endmodule

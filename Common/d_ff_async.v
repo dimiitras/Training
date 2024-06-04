@@ -5,6 +5,7 @@ d,
 q);
 
 parameter SIZE = 1;
+parameter RESET_VALUE = 1;
 
 input clk;
 input rst;
@@ -15,7 +16,7 @@ output reg [(SIZE-1):0] q;
 
 always@(posedge clk, posedge rst) begin
 	if(rst) 
-		q <= {SIZE{1'b0}};
+		q <= RESET_VALUE;
 	else
 		q <= d;
 end

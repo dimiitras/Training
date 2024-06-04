@@ -7,12 +7,12 @@
 
 module APB_Slave_tb ();
 
-  reg                         PCLK;
-  reg                         PRESETn;
+  reg                        PCLK;
+  reg                        PRESETn;
   reg        [`ADDRWIDTH-1:0] PADDR;
   reg                         PWRITE;
   reg                         PSEL;
-  reg						  PENABLE;
+  reg			      PENABLE;
   reg     	 [`DATAWIDTH-1:0] PWDATA;
   reg    [(`DATAWIDTH/8)-1:0] PSTROBE;
   wire 	  	 [`DATAWIDTH-1:0] PRDATA;
@@ -26,12 +26,12 @@ integer k;
 
 
 initial begin
-    PCLK = 0;
-    PRESETn = 0;
+    PCLK = 1'b0;
+    PRESETn = 1'b0;
     #10;
-    PRESETn = 1;
-    PSEL = 0;
-	PENABLE = 0;
+    PRESETn = 1'b1;
+    PSEL = 1'b0;
+	PENABLE = 1'b0;
     @(negedge PCLK);
 	@(negedge PCLK);
     Write;
@@ -44,7 +44,7 @@ initial begin
   
   always  #1  PCLK = ~PCLK;
  
-  apb_slv_memory_final #(.DATA_SIZE(`DATAWIDTH), .ADDR_SIZE(`ADDRWIDTH))
+  apb_slv_memory_reg #(.DATA_SIZE(`DATAWIDTH), .ADDR_SIZE(`ADDRWIDTH))
 			DUT(.PCLK(PCLK),
 				.PRESETn(PRESETn),
 				.PADDR(PADDR),
