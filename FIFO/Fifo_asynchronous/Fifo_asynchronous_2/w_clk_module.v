@@ -36,7 +36,8 @@ wire [(ADDRESS_SIZE): 0] w_bin;
 wire [(ADDRESS_SIZE): 0] w_bnext;
 
 
-d_ff_async #(.SIZE(ADDRESS_SIZE+1))
+d_ff_async #(.SIZE(ADDRESS_SIZE+1),
+             .RESET_VALUE(0))
 	w_binary_reg (.clk(w_clk),
 		      .rst(!wrst_n),
 		      .d(w_bnext),
@@ -67,7 +68,8 @@ binary_to_gray #(.N(ADDRESS_SIZE +1))
 
 //Gray register
 
-d_ff_async #(.SIZE(ADDRESS_SIZE+1))
+d_ff_async #(.SIZE(ADDRESS_SIZE+1),
+             .RESET_VALUE(0))
 	w_gray_reg (.clk(w_clk),
 		    .rst(!wrst_n),
 		    .d(w_gnext),
@@ -108,7 +110,8 @@ assign f3 = (wq2_rptr[(ADDRESS_SIZE-2) :0] == w_gnext[(ADDRESS_SIZE-2) :0]);
 
 assign w_full_temp = (f1 & f2 & f3);
 
-d_ff_async #(.SIZE(1))
+d_ff_async #(.SIZE(1),
+             .RESET_VALUE(0))
 	w_full_reg (.clk(w_clk),
 		    .rst(!wrst_n),
 		    .d(w_full_temp),

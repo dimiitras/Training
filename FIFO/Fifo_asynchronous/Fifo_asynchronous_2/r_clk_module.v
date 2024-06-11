@@ -42,7 +42,8 @@ wire [(ADDRESS_SIZE): 0] r_bin;
 wire [(ADDRESS_SIZE): 0] r_bnext;
 
 
-d_ff_async #(.SIZE(ADDRESS_SIZE+1))
+d_ff_async #(.SIZE(ADDRESS_SIZE+1),
+             .RESET_VALUE(0))
 	r_binary_reg (.clk(r_clk),
 		      .rst(!rrst_n),
 		      .d(r_bnext),
@@ -92,7 +93,8 @@ two_ff_synchronizer #(.SYNCHRONIZER_SIZE(ADDRESS_SIZE+1))
 
 //Gray register
 
-d_ff_async #(.SIZE(ADDRESS_SIZE+1))
+d_ff_async #(.SIZE(ADDRESS_SIZE+1),
+             .RESET_VALUE(0))
 	r_gray_reg (.clk(r_clk),
 		    .rst(!rrst_n),
 		    .d(r_gnext),
@@ -111,7 +113,8 @@ assign r_empty_temp = (r_gnext == rq2_wptr);
 
     
 
-d_ff_async_r1 #(.SIZE(1))
+d_ff_async #(.SIZE(1),
+             .RESET_VALUE(1'b1))
 			r_empty_1_reg (.clk(r_clk),
 						 .rst(!rrst_n),
 						 .d(r_empty_temp),
@@ -121,7 +124,8 @@ d_ff_async_r1 #(.SIZE(1))
 
 generate 
 	if((REAL_MEM == 0) && (READ_REG == 1)) begin
-		d_ff_async #(.SIZE(1))
+		d_ff_async #(.SIZE(1),
+                     .RESET_VALUE(1'b1))
 			r_empty_reg (.clk(r_clk),
 						 .rst(!rrst_n),
 						 .d(r_empty_1),
@@ -142,7 +146,8 @@ endgenerate
 generate
 	if(READ_REG == 0) begin
 		wire r_en_dly;                               //delay control signal (r_en_dly), so that r_bnext 
-		d_ff_async #(.SIZE(1))						//doesn't increment before the r_clk posedge 
+		d_ff_async #(.SIZE(1),
+             .RESET_VALUE(0))						//doesn't increment before the r_clk posedge 
 			r_enable_reg (.clk(r_clk),      	   //and r_addr increments correctly.	    
 					.rst(!rrst_n),
 					.d(r_en),
